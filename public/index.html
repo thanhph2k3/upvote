@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Upvote Campaigns</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">U</div>
+          <div>
+            <h1>Upvote</h1>
+            <p>Campaign Monitor</p>
+          </div>
+        </div>
+        <nav class="nav">
+          <a class="nav-link is-active" href="/">Chiến dịch</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="page-eyebrow">Tổng quan</p>
+            <h2 id="page-title">Danh sách chiến dịch</h2>
+          </div>
+          <div class="topbar-actions" aria-label="Bộ lọc và thao tác">
+            <div class="date-filter" aria-label="Lọc ngày">
+              <label>
+                <span>Từ ngày</span>
+                <input id="start-date" type="date" />
+              </label>
+              <label>
+                <span>Đến ngày</span>
+                <input id="end-date" type="date" />
+              </label>
+              <button class="btn btn-ghost" id="clear-filter" type="button">Xóa lọc</button>
+            </div>
+            <button class="btn btn-primary btn-icon" id="refresh-realtime" type="button" aria-label="Làm mới realtime" title="Làm mới realtime">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 12a8 8 0 0 1-13.7 5.6" />
+                <path d="M4 12A8 8 0 0 1 17.7 6.4" />
+                <path d="M17 2v5h-5" />
+                <path d="M7 22v-5h5" />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <section id="campaign-list-view" class="view">
+          <div class="table-toolbar">
+            <div>
+              <h3>Chiến dịch</h3>
+              <p id="campaign-count">0 chiến dịch</p>
+            </div>
+          </div>
+
+          <div class="campaign-group">
+            <div class="group-heading">
+              <h4>Bầu lãnh đạo</h4>
+              <span id="leader-campaign-count">0 chiến dịch</span>
+            </div>
+            <div class="table-wrap">
+              <table class="campaign-table">
+                <thead>
+                  <tr>
+                    <th>Tên lãnh đạo</th>
+                    <th>Số vote trước khi chạy</th>
+                    <th>Tổng số vote</th>
+                    <th>Số vote sau khi chạy</th>
+                    <th>Số Vote Realtime</th>
+                  </tr>
+                </thead>
+                <tbody id="leader-campaign-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="campaign-group">
+            <div class="group-heading">
+              <h4>Doanh nghiệp</h4>
+              <span id="business-campaign-count">0 chiến dịch</span>
+            </div>
+            <div class="table-wrap">
+              <table class="campaign-table">
+                <thead>
+                  <tr>
+                    <th>Tên Doanh Nghiệp</th>
+                    <th>Số vote trước khi chạy</th>
+                    <th>Tổng số vote</th>
+                    <th>Số vote sau khi chạy</th>
+                    <th>Số Vote Realtime</th>
+                  </tr>
+                </thead>
+                <tbody id="business-campaign-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="campaign-detail-view" class="view is-hidden">
+          <div class="detail-actions">
+            <a class="btn btn-secondary" href="/">Quay lại</a>
+            <button class="btn btn-primary" id="export-excel" type="button">Xuất Excel</button>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric">
+              <span>Số vote trước khi chạy</span>
+              <strong id="metric-before">0</strong>
+            </article>
+            <article class="metric">
+              <span>Tổng số vote</span>
+              <strong id="metric-total">0</strong>
+            </article>
+            <article class="metric">
+              <span>Số vote sau khi chạy</span>
+              <strong id="metric-after">0</strong>
+            </article>
+            <article class="metric">
+              <span>Số Vote Realtime</span>
+              <strong id="metric-realtime">-</strong>
+            </article>
+          </div>
+
+          <div class="table-toolbar">
+            <div>
+              <h3>Danh sách vote</h3>
+              <p id="vote-count">0 vote</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Người vote</th>
+                  <th>Lựa chọn</th>
+                  <th>Trạng thái</th>
+                  <th>Thời gian</th>
+                </tr>
+              </thead>
+              <tbody id="vote-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div id="loading-state" class="loading-state is-hidden" role="status" aria-live="polite">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          <div>
+            <h3>Đang tải dữ liệu</h3>
+            <p>Vui lòng chờ trong giây lát.</p>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty-state is-hidden">
+          <h3>Không có dữ liệu</h3>
+          <p>Thử đổi khoảng ngày hoặc kiểm tra dữ liệu vote đã được gửi vào hệ thống.</p>
+        </div>
+      </main>
+    </div>
+
+    <div id="toast" class="toast is-hidden" role="status" aria-live="polite"></div>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
