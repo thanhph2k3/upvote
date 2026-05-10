@@ -1,15 +1,14 @@
-# Upvote Backend
+# Upvote
 
-Node.js backend base using Express and PostgreSQL 16.
+Project đã được tách thành hai project độc lập:
 
-## Requirements
+- `backend/` - Node.js + Express API dùng PostgreSQL.
+- `frontend/` - Vite + React + MUI dashboard.
 
-- Node.js 20+
-- PostgreSQL 16 running outside this project
-
-## Setup
+## Backend
 
 ```bash
+cd backend
 cp .env.example .env
 npm install
 npm run db:init
@@ -17,56 +16,83 @@ npm run db:check
 npm run dev
 ```
 
-Update `DATABASE_URL` in `.env` to match your existing PostgreSQL connection.
-
-Frontend:
+Backend mặc định chạy tại:
 
 ```text
 http://localhost:3000
 ```
 
-## Docker
-
-Build and run the app on port 3000:
-
-```bash
-docker build -t upvote .
-docker run --rm --name upvote -p 3000:3000 --env-file .env upvote
-```
-
-Run the command from this project directory so Docker reads the intended `.env` file. If PostgreSQL is running on your host machine and `DATABASE_URL` uses `localhost`, change the host to `host.docker.internal` for Docker Desktop:
-
-```text
-DATABASE_URL=postgres://upvote:upvote_password@host.docker.internal:5432/upvote
-```
-
-If PostgreSQL is on another machine or VPN IP, use that reachable IP/hostname instead. A hostname that only exists on your host, such as a local alias, may not resolve inside the container unless you add it to Docker networking.
-
 API base path:
 
 ```text
-http://localhost:3000/v1
+http://localhost:3000/api/v1
 ```
+
+## Frontend
+
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm run dev
+```
+
+Frontend mặc định chạy tại:
+
+```text
+http://localhost:5173
+```
+
+`frontend/.env` có thể trỏ sang backend khác bằng:
+
+```text
+VITE_API_BASE_URL=http://localhost:3000/api/v1
+```
+
+## Docker Backend
+
+```bash
+cd backend
+docker build -t upvote-backend .
+docker run --rm --name upvote-backend -p 3000:3000 --env-file .env upvote-backend
+```
+
+Nếu PostgreSQL chạy trên host machine và `DATABASE_URL` dùng `localhost`, đổi host thành `host.docker.internal` khi chạy bằng Docker Desktop.
+
+## Docker Compose
+
+Chạy đủ 3 service `frontend`, `backend`, `db` PostgreSQL 16:
+
+```bash
+docker compose up --build
+```
+
+Sau khi compose chạy xong:
+
+```text
+Frontend: http://localhost:5173
+Backend:  http://localhost:3000
+Database: localhost:5432
+```
+
+PostgreSQL dùng thông tin mặc định:
+
+```text
+POSTGRES_DB=upvote
+POSTGRES_USER=upvote
+POSTGRES_PASSWORD=upvote_password
+```
+
+Lần đầu khởi tạo, DB tự tạo bảng `votes` từ `backend/db/init/001-create-votes.sql`.
 
 ## Endpoints
 
-- `GET /v1/health` - application health
-- `GET /v1/health/db` - PostgreSQL connectivity check
-- `GET /v1/vote/campaigns` - list campaigns with vote summary
-- `GET /v1/vote/campaigns/:campaignCode` - list votes for one campaign with vote summary
-- `POST /v1/vote` - create one vote or a batch of votes
-- `GET /v1/vote/campaigns/:campaignCode/realtime-vote` - fetch realtime vote count from an HTML page
+- `GET /api/v1/health` - application health
+- `GET /api/v1/health/db` - PostgreSQL connectivity check
+- `GET /api/v1/vote/campaigns` - list campaigns with vote summary
+- `GET /api/v1/vote/campaigns/:campaignCode` - list votes for one campaign with vote summary
+- `POST /api/v1/vote` - create one vote or a batch of votes
+- `GET /api/v1/vote/campaigns/:campaignCode/realtime-vote` - fetch realtime vote count from the upstream HTML page
+- `POST /api/v1/vote/campaigns/realtime-votes` - fetch realtime vote count for multiple campaigns
 
 Campaign list and detail endpoints support optional `start_unix` and `end_unix` query params for date filtering.
-
-Example `POST /v1/vote` body:
-
-```json
-{
-  "campaign_code": "campaign-1",
-  "vote_number_before": 0,
-  "voter": "user-a",
-  "choice": "A",
-  "status": true
-}
-```

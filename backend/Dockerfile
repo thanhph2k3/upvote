@@ -8,7 +8,6 @@ ENV PORT=3000
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-COPY public ./public
 COPY src ./src
 
 EXPOSE 3000

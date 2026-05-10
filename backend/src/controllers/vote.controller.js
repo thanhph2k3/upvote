@@ -34,6 +34,22 @@ export class VoteController {
     }
   };
 
+  getCampaignRealtimeVotes = async (req, res, next) => {
+    try {
+      const campaignCodes = this.#parseCampaignCodes(req.body?.campaign_codes);
+      const realtimeVoteCounts = await this.realtimeVoteService.getVoteCounts(campaignCodes);
+
+      res.json({
+        realtime_votes: campaignCodes.map((campaignCode) => ({
+          campaign_code: campaignCode,
+          realtime_vote_count: realtimeVoteCounts.get(campaignCode),
+        })),
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   createVote = async (req, res, next) => {
     try {
       const result = await this.voteService.createVoteRequest(req.body);
@@ -42,4 +58,22 @@ export class VoteController {
       next(error);
     }
   };
+
+  #parseCampaignCodes(campaignCodes) {
+    if (!Array.isArray(campaignCodes)) {
+      const error = new Error('campaign_codes must be an array');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const normalizedCodes = campaignCodes.map((campaignCode) => String(campaignCode || '').trim());
+
+    if (normalizedCodes.length === 0 || normalizedCodes.some((campaignCode) => !campaignCode)) {
+      const error = new Error('campaign_codes must contain at least one non-empty campaign code');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    return [...new Set(normalizedCodes)];
+  }
 }

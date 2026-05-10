@@ -5,6 +5,7 @@ const { Pool } = pg;
 
 const pool = new Pool({
   connectionString: env.databaseUrl,
+  connectionTimeoutMillis: env.databaseConnectionTimeoutMs,
 });
 
 pool.on('error', (error) => {
