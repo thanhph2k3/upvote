@@ -10,7 +10,7 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ${POSTGRES_DATA_DIR:-./.data/postgres}:/var/lib/postgresql/data
       - ./backend/db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
@@ -48,6 +48,3 @@ services:
       - "${FRONTEND_PORT:-5173}:80"
     depends_on:
       - backend
-
-volumes:
-  postgres_data:

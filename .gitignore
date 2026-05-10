@@ -7,3 +7,4 @@ pnpm-debug.log*
 coverage
 dist
 .DS_Store
+.data/
