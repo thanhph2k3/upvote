@@ -16,9 +16,12 @@ export class HtmlPageInspector {
         method: 'GET',
         headers: {
           accept: 'text/html,application/xhtml+xml',
+          'cache-control': 'no-cache',
+          pragma: 'no-cache',
           'user-agent': this.userAgent,
           ...(options.headers || {}),
         },
+        cache: 'no-store',
         signal: controller.signal,
       });
 

@@ -65,7 +65,13 @@ Chạy đủ 3 service `frontend`, `backend`, `db` PostgreSQL 16:
 
 ```bash
 cp .env.example .env
-docker compose up --build
+./scripts/docker-compose-up.sh
+```
+
+Script trên tự tạo `DOCKER_IMAGE_TAG` mới theo timestamp cho `backend` và `frontend`, nên mỗi lần chạy lại Docker Compose sẽ build image với tag mới. Nếu muốn đặt tag thủ công:
+
+```bash
+DOCKER_IMAGE_TAG=my-tag ./scripts/docker-compose-up.sh
 ```
 
 Sau khi compose chạy xong:

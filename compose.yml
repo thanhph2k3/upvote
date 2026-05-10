@@ -19,6 +19,7 @@ services:
       retries: 10
 
   backend:
+    image: upvote-backend:${DOCKER_IMAGE_TAG:-latest}
     build:
       context: ./backend
     container_name: upvote-backend
@@ -36,6 +37,7 @@ services:
         condition: service_healthy
 
   frontend:
+    image: upvote-frontend:${DOCKER_IMAGE_TAG:-latest}
     build:
       context: ./frontend
       args:
