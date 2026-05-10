@@ -1,4 +1,3 @@
-import { HealthController } from './controllers/health.controller.js';
 import { VoteController } from './controllers/vote.controller.js';
 import { database } from './config/db.js';
 import { VoteRepository } from './repositories/vote.repository.js';
@@ -17,6 +16,5 @@ const realtimeVoteService = new RealtimeVoteService({
 
 export const container = {
   database,
-  healthController: new HealthController(database),
   voteController: new VoteController(voteService, realtimeVoteService),
 };

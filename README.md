@@ -64,6 +64,7 @@ Nếu PostgreSQL chạy trên host machine và `DATABASE_URL` dùng `localhost`,
 Chạy đủ 3 service `frontend`, `backend`, `db` PostgreSQL 16:
 
 ```bash
+cp .env.example .env
 docker compose up --build
 ```
 
@@ -83,12 +84,12 @@ POSTGRES_USER=upvote
 POSTGRES_PASSWORD=upvote_password
 ```
 
+Các port, database credentials, `DATABASE_URL`, `CORS_ORIGIN`, và `VITE_API_BASE_URL` được chỉnh trong file `.env` ở root project.
+
 Lần đầu khởi tạo, DB tự tạo bảng `votes` từ `backend/db/init/001-create-votes.sql`.
 
 ## Endpoints
 
-- `GET /api/v1/health` - application health
-- `GET /api/v1/health/db` - PostgreSQL connectivity check
 - `GET /api/v1/vote/campaigns` - list campaigns with vote summary
 - `GET /api/v1/vote/campaigns/:campaignCode` - list votes for one campaign with vote summary
 - `POST /api/v1/vote` - create one vote or a batch of votes

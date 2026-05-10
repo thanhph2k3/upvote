@@ -4,16 +4,16 @@ services:
     container_name: upvote-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: upvote
-      POSTGRES_USER: upvote
-      POSTGRES_PASSWORD: upvote_password
+      POSTGRES_DB: ${POSTGRES_DB:-upvote}
+      POSTGRES_USER: ${POSTGRES_USER:-upvote}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-upvote_password}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U upvote -d upvote"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -24,13 +24,13 @@ services:
     container_name: upvote-backend
     restart: unless-stopped
     environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: postgres://upvote:upvote_password@db:5432/upvote
-      DB_CONNECTION_TIMEOUT_MS: 5000
-      CORS_ORIGIN: http://localhost:5173
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${BACKEND_CONTAINER_PORT:-3000}
+      DATABASE_URL: ${DATABASE_URL:-postgres://upvote:upvote_password@db:5432/upvote}
+      DB_CONNECTION_TIMEOUT_MS: ${DB_CONNECTION_TIMEOUT_MS:-5000}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT:-3000}:${BACKEND_CONTAINER_PORT:-3000}"
     depends_on:
       db:
         condition: service_healthy
@@ -39,11 +39,11 @@ services:
     build:
       context: ./frontend
       args:
-        VITE_API_BASE_URL: http://localhost:3000/api/v1
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000/api/v1}
     container_name: upvote-frontend
     restart: unless-stopped
     ports:
-      - "5173:80"
+      - "${FRONTEND_PORT:-5173}:80"
     depends_on:
       - backend
 
