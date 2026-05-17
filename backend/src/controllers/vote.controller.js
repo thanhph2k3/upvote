@@ -46,6 +46,7 @@ export class VoteController {
         })),
       });
     } catch (error) {
+      console.error('Error in getCampaignRealtimeVotes:', error);
       next(error);
     }
   };
